@@ -13,9 +13,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.util.ArrayList;
 
 
-public class XmlManager {
+public class XmlManager implements XmlManagerInterface {
     private String filePath = "alumnos.xml";
 
     private File archivoXml;
@@ -98,15 +99,7 @@ public class XmlManager {
                 String idBuscado = alumnoValido.getElementsByTagName("id").item(0).getTextContent();
 
                 if (id.equals(idBuscado)) {
-                    String nombre = alumnoValido.getElementsByTagName("nombre").item(0).getTextContent();
-                    String edad = alumnoValido.getElementsByTagName("edad").item(0).getTextContent();
-                    String telefono = alumnoValido.getElementsByTagName("telefono").item(0).getTextContent();
-                    String identidad = alumnoValido.getElementsByTagName("identidad").item(0).getTextContent();
-                    String email = alumnoValido.getElementsByTagName("email").item(0).getTextContent();
-                    String sexo = alumnoValido.getElementsByTagName("sexo").item(0).getTextContent();
-                    String idXml = alumnoValido.getElementsByTagName("id").item(0).getTextContent();
-
-                    alumno = new Alumno(nombre, edad, telefono, identidad, email, sexo, idXml);
+                    alumno = this.parseAlumnoFromXml(alumnoValido);
                 }
             }
         }
@@ -213,11 +206,11 @@ public class XmlManager {
         return true;
     }
 
-    public Alumno[] listarAlumnos() throws Exception {
+    public ArrayList<Alumno> listarAlumnos() throws Exception {
 
         NodeList alumnosXml = document.getElementsByTagName("alumno");
 
-        Alumno[] alumnosArray = new Alumno[alumnosXml.getLength()];
+        ArrayList<Alumno> alumnosArray = new ArrayList<Alumno>();
 
         if (alumnosXml.getLength() == 0) {
             throw new Exception("No hay ningun alumno registrado");
@@ -229,19 +222,25 @@ public class XmlManager {
             if (alumnoXml.getNodeType() == Node.ELEMENT_NODE) {
                 Element alumnoValido = (Element) alumnoXml;
 
-                String nombre = alumnoValido.getElementsByTagName("nombre").item(0).getTextContent();
-                String edad = alumnoValido.getElementsByTagName("edad").item(0).getTextContent();
-                String telefono = alumnoValido.getElementsByTagName("telefono").item(0).getTextContent();
-                String identidad = alumnoValido.getElementsByTagName("identidad").item(0).getTextContent();
-                String email = alumnoValido.getElementsByTagName("email").item(0).getTextContent();
-                String sexo = alumnoValido.getElementsByTagName("sexo").item(0).getTextContent();
-                String idXml = alumnoValido.getElementsByTagName("id").item(0).getTextContent();
+                Alumno parcedAlumno = this.parseAlumnoFromXml(alumnoValido);
 
-                alumnosArray[i] = new Alumno(nombre, edad, telefono, identidad, email, sexo, idXml);
+                alumnosArray.add(parcedAlumno);
             }
         }
 
         return alumnosArray;
+    }
+
+    private Alumno parseAlumnoFromXml(Element alumnoFromXml) {
+        String nombre = alumnoFromXml.getElementsByTagName("nombre").item(0).getTextContent();
+        String edad = alumnoFromXml.getElementsByTagName("edad").item(0).getTextContent();
+        String telefono = alumnoFromXml.getElementsByTagName("telefono").item(0).getTextContent();
+        String identidad = alumnoFromXml.getElementsByTagName("identidad").item(0).getTextContent();
+        String email = alumnoFromXml.getElementsByTagName("email").item(0).getTextContent();
+        String sexo = alumnoFromXml.getElementsByTagName("sexo").item(0).getTextContent();
+        String idXml = alumnoFromXml.getElementsByTagName("id").item(0).getTextContent();
+
+        return new Alumno(nombre, edad, telefono, identidad, email, sexo, idXml);
     }
 
     public boolean deleteAlumno(String id) throws Exception {

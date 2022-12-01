@@ -16,8 +16,8 @@ public class Alumno {
         return id.toString();
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = UUID.fromString(id);
     }
 
     public String getNombre() {
@@ -75,6 +75,23 @@ public class Alumno {
         this.identidad = identidad;
         this.email = email;
         this.sexo = sexo;
-        this.id = id != null ? UUID.fromString(id) : UUID.randomUUID();
+        this.id = UUID.fromString(id);
     }
+
+    public Alumno(String nombre, String edad, String telefono, String identidad, String email, String sexo) {
+        this.nombre = nombre;
+        this.edad = edad;
+        this.telefono = telefono;
+        this.identidad = identidad;
+        this.email = email;
+        this.sexo = sexo;
+        this.id = UUID.randomUUID();
+    }
+
+    @Override
+    public String toString() {
+        return this.getNombre() + " " + this.getEdad() + " " + this.getTelefono() + " " + this.getIdentidad() + " " + this.getEmail() + " " + this.getSexo() + " " + this.getId();
+    }
+
+
 }
